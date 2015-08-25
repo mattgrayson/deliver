@@ -86,9 +86,13 @@ module Deliver
 
           app_identifier = options.app_identifier || CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier) || ask("Please enter the app's bundle identifier: ")
           app = Deliver::App.new(app_identifier: app_identifier)
-
-          path = (Deliver::Helper.fastlane_enabled?? './fastlane' : '.')
-          path = File.join(path, "deliver")
+          
+          unless ENV["DELIVER_SCREENSHOTS_PATH"]
+            path = (Deliver::Helper.fastlane_enabled?? './fastlane' : '.')
+            path = File.join(path, "deliver")
+          else
+            path = ENV["DELIVER_SCREENSHOTS_PATH"]
+          end
 
           Deliver::DownloadScreenshots.run(app, path)
         end
